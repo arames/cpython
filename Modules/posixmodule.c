@@ -140,6 +140,15 @@ corresponding Unix manual entries for more information on calls.");
 #if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__APPLE__)
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
+#if defined(_POSIX_C_SOURCE) /* see socket.h */
+struct sf_hdtr {
+    struct iovec *headers; /* pointer to an array of header struct iovec's */
+    int hdr_cnt;           /* number of header iovec's */
+    struct iovec *trailers;/* pointer to an array of trailer struct iovec's */
+    int trl_cnt;           /* number of trailer iovec's */
+};
+int sendfile(int, int, off_t, off_t *, struct sf_hdtr *, int);
+#endif
 #endif
 #endif
 
@@ -6624,11 +6633,10 @@ error:
 #else
 #ifdef HAVE_LIBUTIL_H
 #include <libutil.h>
-#else
+#endif
 #ifdef HAVE_UTIL_H
 #include <util.h>
 #endif /* HAVE_UTIL_H */
-#endif /* HAVE_LIBUTIL_H */
 #endif /* HAVE_PTY_H */
 #ifdef HAVE_STROPTS_H
 #include <stropts.h>
